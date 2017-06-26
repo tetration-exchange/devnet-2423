@@ -125,7 +125,12 @@ def get_flows(search_query, offset=""):
 def get_stats(flows):
     metrics = {}
     # DEVNET Code Start, tag=stats
-
+    metrics = {
+        "rev_pkts": sum([f.get('rev_pkts') for f in flows]),
+        "fwd_pkts": sum([f.get('fwd_pkts') for f in flows]),
+        "rev_bytes": sum([f.get('rev_bytes') for f in flows]),
+        "fwd_bytes": sum([f.get('fwd_bytes') for f in flows]),
+    }
     # DEVNET Code End
     return metrics
 
