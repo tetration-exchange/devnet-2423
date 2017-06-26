@@ -69,7 +69,15 @@ def connect():
 def get_sensors():
     sensors = {}
     # DEVNET Code Start, tag=sensors
-
+    all_sensors = query("GET", "/sensors")
+    for s in all_sensors['results']:
+        # I don't care about the Tetration hosts for now, let's ignore them
+        if not any(d.get('vrf', None) == 'Tetration' for d in s['interfaces']):
+            sensors[s['uuid']] = {
+                "hostname": s['host_name'],
+                "uuid": s['uuid'],
+                "interfaces": list(map(lambda x: {"ip": x['ip'], "type": x['family_type'], "vrf": x['vrf'], "mac": x['mac']}, s['interfaces'])),
+            }
     # DEVNET Code End
     return sensors
 
