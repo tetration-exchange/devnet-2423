@@ -76,7 +76,32 @@ def get_sensors():
 def get_application(app_id):
     retval = {}
     # DEVNET Code Start, tag=application
+    # let's get the app details...
+    details = query("GET", "/applications/" + app_id + "/details")
 
+    # ...and the scope details...
+    scope = query("GET", "/app_scopes/" + details['app_scope_id'])
+
+    # what are my external dependencies?
+    d = details.get('inventory_filters')
+    if d == None:
+        d = []
+    # this can also be written as details.get('inventory_filters', [])
+
+    # who is part of my application?
+    c = details.get('clusters')
+    if c == None:
+        c = []
+    # this can also be written as details.get('clusters', [])
+
+    # make it pretty!
+    retval = {
+        "scope": {k: v for k, v in scope.iteritems() if k == "id" or k == "name" or k == "parent_app_scope_id"},
+        "name": details['name'],
+        "id": app_id,
+        "external": list(map(lambda x: {"id": x['id'], "name": x['name']}, d)),
+        "clusters": list(map(lambda x: {"id": x['id'], "name": x['name'], "external": x['external'], "nodes": x['nodes']}, c))
+    }
     # DEVNET Code End
     return retval
 
