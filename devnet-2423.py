@@ -108,7 +108,17 @@ def get_application(app_id):
 def get_flows(search_query, offset=""):
     res = []
     # DEVNET Code Start, tag=flows
+    if not offset:
+      search_query['offset'] = offset
 
+    flows = query("POST", "/flowsearch", search_query)
+    if flows['results'] == None:
+        return []
+
+    res = flows['results']
+
+    if "offset" in flows:
+        res += get_flows(search_query, flows['offset'])
     # DEVNET Code End
     return res
 
