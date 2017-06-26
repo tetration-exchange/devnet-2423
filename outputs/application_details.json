@@ -1,0 +1,231 @@
+{
+  "inventory_filters": [{
+    "query": {
+      "field": "vrf_id",
+      "type": "eq",
+      "value": 1
+    },
+    "id": "59207955497d4f05bd7e688b",
+    "name": "Default"
+  }, {
+    "parent_app_scope": {
+      "id": "592377d1497d4f4683fd61f6",
+      "name": "Default:SJC14"
+    },
+    "query": {
+      "type": "and",
+      "filters": [{
+        "field": "vrf_id",
+        "type": "eq",
+        "value": 1
+      }, {
+        "field": "user_location",
+        "type": "eq",
+        "value": "SJC14"
+      }, {
+        "field": "user_app",
+        "type": "eq",
+        "value": "Wordpress"
+      }]
+    },
+    "id": "592377dc755f0231b08c8c09",
+    "name": "Default:SJC14:Wordpress"
+  }, {
+    "parent_app_scope": {
+      "id": "592385aa755f020ad88c8c1e",
+      "name": "Default:Tetration"
+    },
+    "query": {
+      "type": "and",
+      "filters": [{
+        "field": "vrf_id",
+        "type": "eq",
+        "value": 1
+      }, {
+        "field": "ip",
+        "type": "subnet",
+        "value": "10.28.121.160/27"
+      }, {
+        "field": "ip",
+        "type": "subnet",
+        "value": "10.28.121.160/27"
+      }]
+    },
+    "id": "5936ea62497d4f210bfd61f0",
+    "name": "Tetration Filter"
+  }],
+  "description": "Joe - Means DO - NOT - MAKE - CHANGES",
+  "author": "Remi Philippe",
+  "created_at": 1496894399,
+  "primary": true,
+  "absolute_policies": [{
+    "l4_params": [{
+      "port": [22, 22],
+      "proto": 6
+    }, {
+      "port": [0, 0],
+      "proto": 1
+    }],
+    "consumer_filter_id": "59207955497d4f05bd7e688b",
+    "provider_filter_name": "Default:SJC14:Wordpress",
+    "priority": 100,
+    "consumer_filter_name": "Default",
+    "action": "ALLOW",
+    "provider_filter_id": "592377dc755f0231b08c8c09"
+  }, {
+    "l4_params": [{
+      "port": [53, 53],
+      "proto": 17
+    }, {
+      "port": [123, 123],
+      "proto": 17
+    }],
+    "consumer_filter_id": "592377dc755f0231b08c8c09",
+    "provider_filter_name": "Default",
+    "priority": 100,
+    "consumer_filter_name": "Default:SJC14:Wordpress",
+    "action": "ALLOW",
+    "provider_filter_id": "59207955497d4f05bd7e688b"
+  }, {
+    "l4_params": [{
+      "port": [443, 443],
+      "proto": 6
+    }, {
+      "port": [5640, 5640],
+      "proto": 6
+    }, {
+      "port": [5660, 5660],
+      "proto": 6
+    }],
+    "consumer_filter_id": "592377dc755f0231b08c8c09",
+    "provider_filter_name": "Tetration Filter",
+    "priority": 100,
+    "consumer_filter_name": "Default:SJC14:Wordpress",
+    "action": "ALLOW",
+    "provider_filter_id": "5936ea62497d4f210bfd61f0"
+  }],
+  "catch_all_action": "DENY",
+  "version": 2,
+  "default_policies": [{
+    "l4_params": [{
+      "port": [4567, 4567],
+      "proto": 6
+    }],
+    "consumer_filter_id": "5938cee4497d4f0a61e0618f",
+    "provider_filter_name": "db",
+    "priority": 100,
+    "consumer_filter_name": "db",
+    "action": "ALLOW",
+    "provider_filter_id": "5938cee4497d4f0a61e0618f"
+  }, {
+    "l4_params": [{
+      "port": [80, 80],
+      "proto": 6
+    }],
+    "consumer_filter_id": "59207955497d4f05bd7e688b",
+    "provider_filter_name": "web",
+    "priority": 100,
+    "consumer_filter_name": "Default",
+    "action": "ALLOW",
+    "provider_filter_id": "5938cee4497d4f0a61e06192"
+  }, {
+    "l4_params": [{
+      "port": [3306, 3306],
+      "proto": 6
+    }],
+    "consumer_filter_id": "5938cee4497d4f0a61e06189",
+    "provider_filter_name": "db",
+    "priority": 100,
+    "consumer_filter_name": "proxy-be",
+    "action": "ALLOW",
+    "provider_filter_id": "5938cee4497d4f0a61e0618f"
+  }, {
+    "l4_params": [{
+      "port": [80, 80],
+      "proto": 6
+    }],
+    "consumer_filter_id": "5938cee4497d4f0a61e06192",
+    "provider_filter_name": "app",
+    "priority": 100,
+    "consumer_filter_name": "web",
+    "action": "ALLOW",
+    "provider_filter_id": "5938cee4497d4f0a61e06191"
+  }, {
+    "l4_params": [{
+      "port": [3306, 3306],
+      "proto": 6
+    }],
+    "consumer_filter_id": "5938cee4497d4f0a61e06191",
+    "provider_filter_name": "proxy-be",
+    "priority": 100,
+    "consumer_filter_name": "app",
+    "action": "ALLOW",
+    "provider_filter_id": "5938cee4497d4f0a61e06189"
+  }],
+  "vrf": {
+    "tenant_id": 0,
+    "tenant_name": "Default",
+    "id": 1,
+    "name": "Default"
+  },
+  "clusters": [{
+    "name": "app",
+    "labels": [],
+    "id": "5938cee4497d4f0a61e06191",
+    "external": false,
+    "nodes": [{
+      "ip": "172.31.185.152",
+      "name": "nginx-1"
+    }],
+    "approved": true
+  }, {
+    "name": "caching",
+    "labels": [],
+    "id": "5938cee4497d4f0a61e06190",
+    "external": false,
+    "nodes": [{
+      "ip": "172.31.185.156",
+      "name": "memcached-1"
+    }],
+    "approved": true
+  }, {
+    "name": "db",
+    "labels": [],
+    "id": "5938cee4497d4f0a61e0618f",
+    "external": false,
+    "nodes": [{
+      "ip": "172.31.185.149",
+      "name": "percona-1"
+    }, {
+      "ip": "172.31.185.150",
+      "name": "percona-2"
+    }, {
+      "ip": "172.31.185.151",
+      "name": "percona-3"
+    }],
+    "approved": true
+  }, {
+    "name": "proxy-be",
+    "labels": [],
+    "id": "5938cee4497d4f0a61e06189",
+    "external": false,
+    "nodes": [{
+      "ip": "172.31.185.158",
+      "name": "haproxy-1"
+    }],
+    "approved": true
+  }, {
+    "name": "web",
+    "labels": [],
+    "id": "5938cee4497d4f0a61e06192",
+    "external": false,
+    "nodes": [{
+      "ip": "172.31.185.154",
+      "name": "varnish-1"
+    }],
+    "approved": true
+  }],
+  "app_scope_id": "592377dc755f0231b08c8c09",
+  "id": "5938cbbf497d4f0d9cfd6206",
+  "name": "Wordpress - DO NOT TOUCH"
+}

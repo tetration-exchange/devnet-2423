@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Tetration Wordpress</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div id="wrapper">
+    <div class="row">
+      <div class="col-md-3"><img src="img/cloud.svg" style="height: 150px" /></div>
+      <div class="col-md-2">
+        <p style="text-align: right; font-weight: bold" id="fwd_bytes_internet"></p>
+        <img src="img/arrows.png" style="height: 150px" />
+        <p style="text-align: left; font-weight: bold" id="rev_bytes_internet"></p>
+      </div>
+      <div class="col-md-2"><img src="img/AWS.svg" style="height: 150px" /></div>
+      <div class="col-md-2">
+        <p style="text-align: right; font-weight: bold" id="fwd_bytes_dc"></p>
+        <img src="img/arrows.png" style="height: 150px" />
+        <p style="text-align: left; font-weight: bold" id="rev_bytes_dc"></p>
+      </div>
+      <div class="col-md-3"><img src="img/Cisco.svg" style="height: 150px" /></div>
+    </div>
+    <div class="row">
+      <div class="col-md-3">
+        <strong>Internet</strong>
+      </div>
+      <div class="col-md-2"></div>
+      <div class="col-md-2">
+        <span id="aws"></span>
+      </div>
+      <div class="col-md-2"></div>
+      <div class="col-md-3">
+        <span id="dc" ></span>
+      </div>
+    </div>
+  </div>
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script>
+    function fileSize(b) {
+        var u = 0, s=1024;
+        while (b >= s || -b >= s) {
+            b /= s;
+            u++;
+        }
+        return (u ? b.toFixed(1) + ' ' : b) + ' KMGTPEZY'[u] + 'B';
+    }
+
+    var queryExternal = {
+      "src_scope":"Default",
+      "dst_hostname": "devnet-haproxy-web",
+      "dst_port": 80,
+      "stats": 1
+    };
+
+    var queryDC = {
+      "src_scope":"Default:AWS",
+      "dst_scope": "Default:SJC15",
+      "stats": 1
+    };
+
+    $.ajax({
+        type: "POST",
+        url: "/api/v1/flows",
+        // The key needs to match your method's input parameter (case-sensitive).
+        data: JSON.stringify(queryExternal),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data) {
+          console.log(data);
+          $('#fwd_bytes_internet').text(fileSize(data['fwd_bytes']))
+          $('#rev_bytes_internet').text(fileSize(data['rev_bytes']))
+        },
+        failure: function(errMsg) {
+          console.log(errMsg);
+        }
+    });
+
+    $.ajax({
+        type: "POST",
+        url: "/api/v1/flows",
+        // The key needs to match your method's input parameter (case-sensitive).
+        data: JSON.stringify(queryDC),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data){
+          console.log(data);
+          $('#fwd_bytes_dc').text(fileSize(data['fwd_bytes']))
+          $('#rev_bytes_dc').text(fileSize(data['rev_bytes']))
+        },
+        failure: function(errMsg) {
+          console.log(errMsg);
+        }
+    });
+
+    // Frontend
+    $.ajax({
+        type: "GET",
+        url: "/api/v1/application/594fdd50755f0259c8146bcc",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data){
+          console.log(data);
+          $('#aws').append('<strong>' + data[0]['name'] + '</strong>')
+          $('#aws').append('<ul class="list-group">')
+          for (var i = 0, len = data[0]['clusters'].length; i < len; i++) {
+            if(data[0]['clusters'][i]['external'] == false) {
+              var aws = '<li class="list-group-item justify-content-between">' + data[0]['clusters'][i]['name']
+              aws = aws + '<span class="badge badge-default badge-pill">' + data[0]['clusters'][i]['nodes'].length + '</span>'
+              aws = aws + '</li>'
+              $('#aws').append(aws)
+            }
+          }
+          $('#aws').append('</ul>')
+
+        },
+        failure: function(errMsg) {
+          console.log(errMsg);
+        }
+    });
+
+    // Backend
+    $.ajax({
+        type: "GET",
+        url: "/api/v1/application/594fdd28497d4f3d5e371f3a",
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(data){
+          console.log(data);
+          $('#dc').append('<strong>' + data[0]['name'] + '</strong>')
+          $('#dc').append('<ul class="list-group">')
+          for (var i = 0, len = data[0]['clusters'].length; i < len; i++) {
+            if(data[0]['clusters'][i]['external'] == false) {
+              var dc = '<li class="list-group-item justify-content-between">' + data[0]['clusters'][i]['name']
+              dc = dc + '<span class="badge badge-default badge-pill">' + data[0]['clusters'][i]['nodes'].length + '</span>'
+              dc = dc + '</li>'
+              $('#dc').append(dc)
+
+            }
+          }
+          $('#dc').append('</ul>')
+        },
+        failure: function(errMsg) {
+          console.log(errMsg);
+        }
+    });
+    </script>
+
+  </body>
+</html>

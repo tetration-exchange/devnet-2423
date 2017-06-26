@@ -1,0 +1,21 @@
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Virtual Envs
+.venv
+
+### General ###
+# Credentials
+credentials.*
+api_credentials*.json
+
+vizceral/
+
+# OS X
+.DS_STORE
