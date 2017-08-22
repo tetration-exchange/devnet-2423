@@ -113,7 +113,7 @@ def get_application(app_id):
     # DEVNET Code End
     return retval
 
-def get_flows(search_query, offset=""):
+def get_flows(search_query, offset="", recurse=True):
     res = []
     # DEVNET Code Start, tag=flows
     if not offset:
@@ -228,7 +228,7 @@ def api_get_flows():
         })
 
     #print json.dumps(search_query)
-    flows = get_flows(search_query, offset="")
+    flows = get_flows(search_query, offset="", recurse=False)
     if stats:
         metrics = get_stats(flows)
         return Response(json.dumps(metrics), mimetype='application/json')
