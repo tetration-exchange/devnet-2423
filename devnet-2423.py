@@ -112,7 +112,7 @@ def static_proxy(path):
 def api_get_flows():
     now = datetime.now()
     t1 = now # - timedelta(minutes=360)
-    t0 = t1 - timedelta(hours=1)
+    t0 = t1 - timedelta(hours=3)
 
     src_scope_name = request.get_json().get('src_scope')
     dst_scope_name = request.get_json().get('dst_scope')
