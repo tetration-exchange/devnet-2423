@@ -105,7 +105,7 @@ def get_application(app_id):
     # DEVNET Code End
     return retval
 
-def get_flows(search_query, offset=""):
+def get_flows(search_query, offset="", recurse=True):
     res = []
     # DEVNET Code Start, tag=flows
     if not offset:
@@ -117,7 +117,7 @@ def get_flows(search_query, offset=""):
 
     res = flows['results']
 
-    if "offset" in flows:
+    if "offset" in flows and recurse == True:
         res += get_flows(search_query, flows['offset'])
     # DEVNET Code End
     return res
@@ -152,7 +152,7 @@ def static_proxy(path):
 def api_get_flows():
     now = datetime.now()
     t1 = now # - timedelta(minutes=360)
-    t0 = t1 - timedelta(hours=1)
+    t0 = t1 - timedelta(hours=3)
 
     src_scope_name = request.get_json().get('src_scope')
     dst_scope_name = request.get_json().get('dst_scope')
@@ -220,7 +220,7 @@ def api_get_flows():
         })
 
     #print json.dumps(search_query)
-    flows = get_flows(search_query, offset="")
+    flows = get_flows(search_query, offset="", recurse=False)
     if stats:
         metrics = get_stats(flows)
         return Response(json.dumps(metrics), mimetype='application/json')
